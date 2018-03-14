@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.SurfaceView;
+import android.widget.Toast;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
@@ -14,12 +15,13 @@ import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.imgproc.Imgproc;
 
 public class MainActivity extends AppCompatActivity implements CameraBridgeViewBase.CvCameraViewListener{
 
     private static String TAG = "test";
     JavaCameraView javaCameraView;
-    Mat mRGBA;
+    Mat mRGBA, imgGray, imgCanny;
 
     BaseLoaderCallback loaderCallback = new BaseLoaderCallback(this) {
         @Override
@@ -87,10 +89,14 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
         }
     }
 
+
+
     @Override
     public void onCameraViewStarted(int width, int height) {
         Log.i(TAG,"onCameraViewStarted");
         mRGBA = new Mat(height, width, CvType.CV_8UC4);
+
+       /* imgCanny = new Mat(height, width, CvType.CV_8UC1);*/
     }
 
     @Override
@@ -102,10 +108,15 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
     @Override
     public Mat onCameraFrame(Mat inputFrame) {
         Log.i(TAG,"onCameraFrame");
-        /*mRGBA = ((CameraBridgeViewBase.CvCameraViewFrame) inputFrame).rgba();
-        return mRGBA;*/
-        mRGBA = inputFrame.clone();
-        return mRGBA;
+        //inputFrame = ((CameraBridgeViewBase.CvCameraViewFrame) inputFrame).rgba();
+        //return mRGBA;*/
+        imgGray = new Mat(inputFrame.rows(),inputFrame.cols(),inputFrame.type());
+        Imgproc.cvtColor(inputFrame,imgGray,Imgproc.COLOR_RGB2GRAY);
+        //imgGray = inputFrame.clone();
+
+        //Toast.makeText(getApplicationContext(),imgGray.type(),Toast.LENGTH_LONG).show();
+
+        return imgGray;
     }
 
 
